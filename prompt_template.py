@@ -29,7 +29,7 @@ router_prompt = PromptTemplate(
     
     Bạn là một AI rất thông minh trong việc xác định câu hỏi của người dùng với mục đích "generate" hoặc "web_search" dựa trên những kiến thức mà bạn có.
     Nếu có thể trả lời thì sử dụng "generate" ưu tiên "generate" hơn.
-    chỉ sử dụng "web_search" cho các câu hỏi về các sự kiện gần đây hoặc do người dùng yêu cầu và cập nhật các thông tin mới nhất nếu câu hỏi không rõ ràng để tìm kiếm hoặc các câu bạn không thể trả lời hoặc không được phép trả lời hãy dùng "generate".
+    chỉ sử dụng "web_search" cho các câu hỏi về các sự kiện gần đây hoặc do người dùng yêu cầu và cập nhật các thông tin mới nhất nếu câu hỏi không rõ ràng để tìm kiếm hãy dùng "generate".
     Bạn cần phải xem xét kĩ để đưa ra quyết định sao cho tối ưu tốc độ nhất.
     Trả về JSON với một khóa 'choice' duy nhất chứa một trong hai lựa chọn trên dựa trên câu hỏi mà không có tiêu đề hoặc giải thích.
     
