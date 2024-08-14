@@ -6,11 +6,6 @@ from typing_extensions import TypedDict
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import HumanMessage, AIMessage
 import pickle
-from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader
-import tempfile, os
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import GPT4AllEmbeddings
-from langchain_community.vectorstores import FAISS
 GROQ_API_KEY="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"
 wrapper = DuckDuckGoSearchAPIWrapper(max_results=25)
 web_search_tool = DuckDuckGoSearchRun(api_wrapper=wrapper)
