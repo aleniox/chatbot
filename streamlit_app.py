@@ -1,56 +1,140 @@
 import streamlit as st
-from openai import OpenAI
+from langchain_core.messages import HumanMessage, AIMessage
+from PIL import Image
+import datetime
+from langgraph.graph import END, StateGraph
+from prompt_template import *
+from langchain_groq import ChatGroq
 
-# Show title and description.
-st.title("💬 Chatbot")
-st.write(
-    "This is a simple chatbot that uses OpenAI's GPT-3.5 model to generate responses. "
-    "To use this app, you need to provide an OpenAI API key, which you can get [here](https://platform.openai.com/account/api-keys). "
-    "You can also learn how to build this app step by step by [following our tutorial](https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps)."
-)
+# from langchain_community.llms import LlamaCpp
+# from huggingface_hub import hf_hub_download
 
-# Ask user for their OpenAI API key via `st.text_input`.
-# Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
-# via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
-openai_api_key = st.text_input("OpenAI API Key", type="password")
-if not openai_api_key:
-    st.info("Please add your OpenAI API key to continue.", icon="🗝️")
-else:
+dt = datetime.datetime.now()
+formatted = dt.strftime("%A, %B %d, %Y %I:%M:%S %p")
+print(formatted)
+image_bot = Image.open("avata/avata_bot.png")
+image_human = Image.open("avata/avata_human.png")
 
-    # Create an OpenAI client.
-    client = OpenAI(api_key=openai_api_key)
+# hf_hub_download(repo_id="linl03/Llama-3-8B-Instruct-RAG-GGUF", filename="Llama-3.1-8B-Instruct.Q5_K_M.gguf")
+# llm = LlamaCpp(
+#     model_path="Llama-3.1-8B-Instruct.Q5_K_M.gguf",
+#     temperature=0,
+#     max_tokens=512,
+#     top_p=1,
+#     # callback_manager=callback_manager,
+#     verbose=True,  # Verbose is required to pass to the callback manager
+# )
+llm = ChatGroq(temperature=0, model_name="llama-3.1-8b-instant", api_key=GROQ_API_KEY)
 
-    # Create a session state variable to store the chat messages. This ensures that the
-    # messages persist across reruns.
+
+question_router = router_prompt | llm | JsonOutputParser()
+generate_chain = generate_prompt | llm | StrOutputParser()
+query_chain = query_prompt | llm | JsonOutputParser()
+remind_chain = remind_prompt | llm | StrOutputParser()
+
+def Agent():
+    workflow = StateGraph(State)
+    workflow.add_node("websearch", web_search)
+    workflow.add_node("transform_query", transform_query)
+    workflow.add_node("generate", generate)
+
+    # Build the edges
+    workflow.set_conditional_entry_point(
+        route_question,
+        {
+            "websearch": "transform_query",
+            "generate": "generate",
+        },
+    )
+    workflow.add_edge("transform_query", "websearch")
+    workflow.add_edge("websearch", "generate")
+    workflow.add_edge("generate", END)
+
+    # Compile the workflow
+    local_agent = workflow.compile()
+    return local_agent
+
+def transform_query(state):
+    print("Step: Tối ưu câu hỏi của người dùng")
+    question = state['question']
+    gen_query = query_chain.invoke({"question": question})
+    print(gen_query)
+    search_query = gen_query["query"]
+    return {"search_query": search_query}
+
+def web_search(state):
+    search_query = state['search_query']
+    print(f'Step: Đang tìm kiếm web cho: "{search_query}"')
+    
+    # Web search tool call
+    search_result = web_search_tool.invoke(search_query)
+    print("Search result:", search_result)
+    return {"context": search_result}
+
+def route_question(state):
+    print("Step: Routing Query")
+    question = state['question']
+    output = question_router.invoke({"question": question})
+    print('Lựa chọn của AI là: ', output)
+    if output['choice'] == "web_search":
+        # print("Step: Routing Query to Web Search")
+        return "websearch"
+    elif output['choice'] == 'generate':
+        # print("Step: Routing Query to Generation")
+        return "generate"
+def generate(state):    
+    print("Step: Đang tạo câu trả lời từ những gì tìm được")
+    question = state["question"]
+    context = state["context"]
+    return {'question': question, 'context': context}
+
+def plan_in_day():
+    for chunk in remind_chain.stream({"time": formatted}):
+        print(chunk, end="", flush=True)
+        # st.session_state["full_message"] += chunk
+        yield chunk
+
+def generate_response(prompt):
+
+    local_agent = Agent()
+    output = local_agent.invoke({"question": prompt})
+    context = output['context']
+    with st.sidebar:
+        st.subheader("Web_search")
+        st.markdown(context)
+    questions = output['question']
+    for chunk in generate_chain.stream({"context": context, "question": questions, "chat_history": chat_history}):
+        print(chunk, end="", flush=True)
+        st.session_state["full_message"] += chunk
+        yield chunk
+    # print(st.session_state["full_message"])
+    chat_history.append(HumanMessage(content=questions))
+    chat_history.append(AIMessage(content=st.session_state["full_message"]))
+    with open('data/data_chat.pkl', 'wb') as fp:
+        pickle.dump(chat_history, fp)
+
+def main():
+    st.set_page_config(page_title="Chatbot", page_icon=":book:")
+    st.title("💬 Chatbot")
     if "messages" not in st.session_state:
-        st.session_state.messages = []
+        st.session_state["messages"] = []
+        with st.spinner("Đang lên kế hoạch..."):        
+            st.write_stream(plan_in_day)
+        # {"role": "assistant", "content": "Anh cần tôi giúp gì nào"}]
 
-    # Display the existing chat messages via `st.chat_message`.
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-
-    # Create a chat input field to allow the user to enter a message. This will display
-    # automatically at the bottom of the page.
-    if prompt := st.chat_input("What is up?"):
-
-        # Store and display the current prompt.
+    for msg in st.session_state.messages:
+        if msg["role"] == "user":
+            st.chat_message(msg["role"], avatar=image_human).write(msg["content"])
+        else:
+            st.chat_message(msg["role"], avatar=image_bot).write(msg["content"])
+    if prompt := st.chat_input():
         st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
+        st.chat_message("user", avatar=image_human).write(prompt)
+        st.session_state["full_message"] = ""
+        with st.spinner("Đang tạo câu trả lời..."):        
+            st.chat_message("assistant", avatar=image_bot).write_stream(generate_response(prompt))
+        st.session_state.messages.append({"role": "assistant", "content": st.session_state["full_message"]})   
 
-        # Generate a response using the OpenAI API.
-        stream = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": m["role"], "content": m["content"]}
-                for m in st.session_state.messages
-            ],
-            stream=True,
-        )
 
-        # Stream the response to the chat using `st.write_stream`, then store it in 
-        # session state.
-        with st.chat_message("assistant"):
-            response = st.write_stream(stream)
-        st.session_state.messages.append({"role": "assistant", "content": response})
+if __name__ == "__main__":
+    main()
