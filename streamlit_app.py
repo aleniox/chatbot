@@ -44,9 +44,12 @@ def Agent():
 def transform_query(state):
     print("Step: Tối ưu câu hỏi của người dùng")
     question = state['question']
-    gen_query = query_chain.invoke({"question": question})
-    print(gen_query)
-    search_query = gen_query["query"]
+    try:
+        gen_query = query_chain.invoke({"question": question})
+        print(gen_query)
+        search_query = gen_query["query"]
+    except:
+        search_query = question
     return {"search_query": search_query}
 
 def web_search(state):
