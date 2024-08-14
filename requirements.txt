@@ -1,2 +1,7 @@
 streamlit
 openai
+ollama
+langchain_community
+langgraph
+duckduckgo_search
+llama-cpp-python
