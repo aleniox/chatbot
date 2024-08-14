@@ -6,24 +6,12 @@ from langgraph.graph import END, StateGraph
 from prompt_template import *
 from langchain_groq import ChatGroq
 
-# from langchain_community.llms import LlamaCpp
-# from huggingface_hub import hf_hub_download
 
 dt = datetime.datetime.now()
 formatted = dt.strftime("%A, %B %d, %Y %I:%M:%S %p")
-print(formatted)
 image_bot = Image.open("avata/avata_bot.png")
 image_human = Image.open("avata/avata_human.png")
 
-# hf_hub_download(repo_id="linl03/Llama-3-8B-Instruct-RAG-GGUF", filename="Llama-3.1-8B-Instruct.Q5_K_M.gguf")
-# llm = LlamaCpp(
-#     model_path="Llama-3.1-8B-Instruct.Q5_K_M.gguf",
-#     temperature=0,
-#     max_tokens=512,
-#     top_p=1,
-#     # callback_manager=callback_manager,
-#     verbose=True,  # Verbose is required to pass to the callback manager
-# )
 llm = ChatGroq(temperature=0, model_name="llama-3.1-8b-instant", api_key=GROQ_API_KEY)
 
 
