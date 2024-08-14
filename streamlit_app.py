@@ -44,12 +44,8 @@ def Agent():
 def transform_query(state):
     print("Step: Tối ưu câu hỏi của người dùng")
     question = state['question']
-    try:
-        gen_query = query_chain.invoke({"question": question})
-        print(gen_query)
-        search_query = gen_query["query"]
-    except:
-        search_query = question
+    gen_query = query_chain.invoke({"question": question})
+    search_query = gen_query["query"]
     return {"search_query": search_query}
 
 def web_search(state):
@@ -64,8 +60,11 @@ def web_search(state):
 def route_question(state):
     print("Step: Routing Query")
     question = state['question']
-    output = question_router.invoke({"question": question})
-    print('Lựa chọn của AI là: ', output)
+    try:
+        output = question_router.invoke({"question": question})
+        print('Lựa chọn của AI là: ', output)
+    except:
+        return "generate"
     if output['choice'] == "web_search":
         # print("Step: Routing Query to Web Search")
         return "websearch"
