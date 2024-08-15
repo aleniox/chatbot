@@ -7,7 +7,7 @@ from langchain_groq import ChatGroq
 
 
 dt = datetime.datetime.now()
-formatted = dt.strftime("%A, %B %d, %Y %I:%M:%S %p")
+formatted = dt.strftime("%B %d, %Y %I:%M:%S %p")
 image_bot = Image.open("avata/avata_bot.png")
 image_human = Image.open("avata/avata_human.png")
 
