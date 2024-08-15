@@ -14,7 +14,7 @@ wrapper = DuckDuckGoSearchAPIWrapper(max_results=25)
 web_search_tool = DuckDuckGoSearchRun(api_wrapper=wrapper)
 
 try:
-    with open("data_chat.pkl", 'rb') as fp:
+    with open("data/data_chat.pkl", 'rb') as fp:
         chat_history = pickle.load(fp)
         # print(chat_history)
 except:
