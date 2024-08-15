@@ -105,22 +105,22 @@ def plan_in_day():
         # st.session_state["full_message"] += chunk
         yield chunk
 
-def createdbformPdf(uploaded_files):
-    with st.spinner("Đang sử lý data..."):   
-        vectorstore = None     
-        if uploaded_files:
-            all_loader = []
-            for file in uploaded_files:
-                with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-                    temp_file.write(file.read())
-                    temp_file_path = temp_file.name
-                    pdf_loader = PyPDFLoader(temp_file_path)
-                    all_loader.extend(pdf_loader.load())
-            text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-            chunked_documents = text_splitter.split_documents(all_loader)
-            vectorstore = FAISS.from_documents(chunked_documents, embedding_model)
-            retriever = vectorstore.as_retriever(search_kwargs={"k": 4})
-    return retriever 
+# def createdbformPdf(uploaded_files):
+#     with st.spinner("Đang sử lý data..."):   
+#         vectorstore = None     
+#         if uploaded_files:
+#             all_loader = []
+#             for file in uploaded_files:
+#                 with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+#                     temp_file.write(file.read())
+#                     temp_file_path = temp_file.name
+#                     pdf_loader = PyPDFLoader(temp_file_path)
+#                     all_loader.extend(pdf_loader.load())
+#             text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+#             chunked_documents = text_splitter.split_documents(all_loader)
+#             vectorstore = FAISS.from_documents(chunked_documents, embedding_model)
+#             retriever = vectorstore.as_retriever(search_kwargs={"k": 4})
+#     return retriever 
 
 def generate_response(prompt):
     local_agent = Agent()

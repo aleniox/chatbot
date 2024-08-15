@@ -6,10 +6,10 @@ from typing_extensions import TypedDict
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import HumanMessage, AIMessage
 import tempfile, os
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import GPT4AllEmbeddings
-from langchain_community.vectorstores import FAISS
-from langchain_community.document_loaders import PyPDFLoader
+# from langchain.text_splitter import RecursiveCharacterTextSplitter
+# from langchain_community.embeddings import GPT4AllEmbeddings
+# from langchain_community.vectorstores import FAISS
+# from langchain_community.document_loaders import PyPDFLoader
 import pickle
 
 GROQ_API_KEY="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"
@@ -17,7 +17,7 @@ GROQ_API_KEY="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"
 
 wrapper = DuckDuckGoSearchAPIWrapper(max_results=25)
 web_search_tool = DuckDuckGoSearchRun(api_wrapper=wrapper)
-embedding_model = GPT4AllEmbeddings(model_name="all-MiniLM-L6-v2.gguf2.f16.gguf", gpt4all_kwargs={'allow_download': 'True'})
+# embedding_model = GPT4AllEmbeddings(model_name="all-MiniLM-L6-v2.gguf2.f16.gguf", gpt4all_kwargs={'allow_download': 'True'})
 
 retriever = None
 
