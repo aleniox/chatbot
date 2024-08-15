@@ -68,7 +68,7 @@ query_prompt = PromptTemplate(
     
     Bạn là một AI rất thông minh trong việc tạo khóa tìm kiếm trên web cho các câu hỏi.
     Thông thường, người dùng sẽ hỏi một câu hỏi cơ bản mà họ muốn tìm hiểu thêm, tuy nhiên câu hỏi đó có thể chưa ở định dạng tốt nhất.
-    Nên hãy viết lại câu hỏi của họ để tìm kiếm được những thông tin mới nhất từ internet. Nếu không hãy giữ nguyên câu hỏi.
+    Nên hãy viết lại câu hỏi của họ để tìm kiếm được những thông tin mới nhất từ internet. Nếu không thể tối ưu hãy giữ nguyên câu hỏi.
     Trả về JSON với một 'query' khóa duy nhất mà không có tiêu đề hoặc giải thích.
     Question to transform: {question} 
     <|eot_id|>
