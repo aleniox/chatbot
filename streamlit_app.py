@@ -90,7 +90,7 @@ def generate_response(prompt):
     context = output['context']
     with st.sidebar:
         st.subheader("Web_search")
-        st.markdown(context)
+        st.write(context)
     questions = output['question']
     for chunk in generate_chain.stream({"context": context, "question": questions, "chat_history": chat_history}):
         print(chunk, end="", flush=True)
@@ -104,6 +104,8 @@ def generate_response(prompt):
 def main():
     st.set_page_config(page_title="Chatbot", page_icon=":speech_balloon:")
     st.title("💬 Chatbot")
+    with st.sidebar:
+        st.subheader("Web_search")
     if "messages" not in st.session_state:
         st.session_state["messages"] = []
         with st.spinner("Đang lên kế hoạch..."):        
