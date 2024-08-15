@@ -6,14 +6,12 @@ from langgraph.graph import END, StateGraph
 from prompt_template import *
 from langchain_groq import ChatGroq
 
-
 dt = datetime.datetime.now()
-formatted = dt.strftime("%A, %B %d, %Y %I:%M:%S %p")
+formatted = dt.strftime("%B %d, %Y %I:%M:%S %p")
 image_bot = Image.open("avata/avata_bot.png")
 image_human = Image.open("avata/avata_human.png")
 
 llm = ChatGroq(temperature=0, model_name="llama-3.1-8b-instant", api_key=GROQ_API_KEY)
-
 
 question_router = router_prompt | llm | JsonOutputParser()
 generate_chain = generate_prompt | llm | StrOutputParser()
@@ -46,7 +44,6 @@ def transform_query(state):
     print("Step: Tối ưu câu hỏi của người dùng")
     question = state['question']
     gen_query = query_chain.invoke({"question": question})
-    print(gen_query)
     search_query = gen_query["query"]
     return {"search_query": search_query}
 
@@ -62,14 +59,16 @@ def web_search(state):
 def route_question(state):
     print("Step: Routing Query")
     question = state['question']
-    output = question_router.invoke({"question": question})
-    print('Lựa chọn của AI là: ', output)
+    try:
+        output = question_router.invoke({"question": question})
+        print('Lựa chọn của AI là: ', output)
+    except:
+        return "generate"
     if output['choice'] == "web_search":
-        # print("Step: Routing Query to Web Search")
         return "websearch"
     elif output['choice'] == 'generate':
-        # print("Step: Routing Query to Generation")
         return "generate"
+    
 def generate(state):    
     print("Step: Đang tạo câu trả lời từ những gì tìm được")
     question = state["question"]
@@ -95,14 +94,13 @@ def generate_response(prompt):
         print(chunk, end="", flush=True)
         st.session_state["full_message"] += chunk
         yield chunk
-    # print(st.session_state["full_message"])
     chat_history.append(HumanMessage(content=questions))
     chat_history.append(AIMessage(content=st.session_state["full_message"]))
     with open('data/data_chat.pkl', 'wb') as fp:
         pickle.dump(chat_history, fp)
 
 def main():
-    st.set_page_config(page_title="Chatbot", page_icon=":book:")
+    st.set_page_config(page_title="Chatbot", page_icon=":speech_balloon:")
     st.title("💬 Chatbot")
     if "messages" not in st.session_state:
         st.session_state["messages"] = []
