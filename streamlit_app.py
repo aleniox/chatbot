@@ -7,8 +7,8 @@ from langchain_groq import ChatGroq
 
 dt = datetime.datetime.now()
 formatted = dt.strftime("%B %d, %Y %I:%M:%S %p")
-image_bot = Image.open("avata/avata_bot.png")
-image_human = Image.open("avata/avata_human.png")
+image_human = Image.open("avata/avata_bot.png")
+image_bot = Image.open("avata/avata_human.png")
 
 llm = ChatGroq(temperature=0, model_name="llama-3.1-8b-instant", api_key=GROQ_API_KEY)
 question_router = router_prompt | llm | JsonOutputParser()
