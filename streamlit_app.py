@@ -220,7 +220,7 @@ def create_vectorstore(data):
 
 def main():
 
-    st.set_page_config(page_title="Abox", page_icon=":speech_balloon:")
+    st.set_page_config(page_title="Chatbot", page_icon=":speech_balloon:")
     st.title("💬 Chatbot")
 
     if "messages" not in st.session_state:
