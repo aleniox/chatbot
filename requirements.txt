@@ -7,3 +7,6 @@ langchain_groq
 langchain_core
 python-dotenv
 gpt4all
+PyPDF2
+faiss-cpu
+
