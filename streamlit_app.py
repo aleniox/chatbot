@@ -147,7 +147,11 @@ def route_question(state):
 def generate(state):    
     print("Step: Đang tạo câu trả lời từ những gì tìm được")
     question = state["question"]
-    context = state["context"]
+    try:
+        context = state["context"]
+    except Exception as e:
+        print("Lỗi: ", e)
+        context = ""
     return {'question': question, 'context': context}
 
 def plan_in_day():
