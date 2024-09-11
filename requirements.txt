@@ -5,3 +5,4 @@ duckduckgo_search
 langchain
 langchain_groq
 langchain_core
+python-dotenv
