@@ -13,7 +13,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import ChatPromptTemplate
 import pickle, os
-from langchain_community.embeddings import HuggingFaceInstructEmbeddings, GPT4AllEmbeddings
+from langchain_community.embeddings import HuggingFaceInstructEmbeddings
+# , GPT4AllEmbeddings
 from dotenv import load_dotenv
 import parameter
 load_dotenv()
@@ -79,15 +80,15 @@ image_human = Image.open("avata/avata_shogun.png")
 #                 )
 
 llm = ChatGroq(temperature=0, model_name="llama-3.1-70b-versatile", api_key=os.getenv("GROQ_API_KEY"))
-embedding_model = GPT4AllEmbeddings(model_name="all-MiniLM-L6-v2.gguf2.f16.gguf", gpt4all_kwargs={'allow_download': 'True'})
-# model_name = "hkunlp/instructor-large"
-# model_kwargs = {'device': 'cpu'}
-# encode_kwargs = {'normalize_embeddings': True}
-# embedding_model = HuggingFaceInstructEmbeddings(
-#     model_name=model_name,
-#     model_kwargs=model_kwargs,
-#     encode_kwargs=encode_kwargs
-# )
+# embedding_model = GPT4AllEmbeddings(model_name="all-MiniLM-L6-v2.gguf2.f16.gguf", gpt4all_kwargs={'allow_download': 'True'})
+model_name = "hkunlp/instructor-large"
+model_kwargs = {'device': 'cpu'}
+encode_kwargs = {'normalize_embeddings': True}
+embedding_model = HuggingFaceInstructEmbeddings(
+    model_name=model_name,
+    model_kwargs=model_kwargs,
+    encode_kwargs=encode_kwargs
+)
 question_router = router_prompt | llm | JsonOutputParser()
 generate_chain = generate_prompt | llm | StrOutputParser()
 query_chain = query_prompt | llm | JsonOutputParser()
