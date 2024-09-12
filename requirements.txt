@@ -6,8 +6,6 @@ langchain
 langchain_groq
 langchain_core
 python-dotenv
-gpt4all
+fastembed
 PyPDF2
 faiss-cpu
-InstructorEmbedding
-pytorch
