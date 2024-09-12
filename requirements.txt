@@ -10,3 +10,4 @@ gpt4all
 PyPDF2
 faiss-cpu
 InstructorEmbedding
+opencc==1.1.6
