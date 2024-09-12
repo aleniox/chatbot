@@ -9,4 +9,4 @@ python-dotenv
 gpt4all
 PyPDF2
 faiss-cpu
-
+InstructorEmbedding
