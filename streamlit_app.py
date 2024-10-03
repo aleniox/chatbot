@@ -70,7 +70,7 @@ formatted = dt.strftime("%B %d, %Y %I:%M:%S %p")
 image_bot = Image.open("avata/avata_human.png")
 image_human = Image.open("avata/avata_shogun.png")
 
-llm = ChatGroq(temperature=0, model_name="llama-3.1-70b-versatile", api_key=os.getenv("GROQ_API_KEY"))
+llm = ChatGroq(temperature=0, model_name="llama-3.1-8b-instant", api_key=os.getenv("GROQ_API_KEY"))
 # embedding_model = GPT4AllEmbeddings(model_name="all-MiniLM-L6-v2.gguf2.f16.gguf", gpt4all_kwargs={'allow_download': 'True'})
 embedding_model = FastEmbedEmbeddings()
 question_router = router_prompt | llm | JsonOutputParser()
