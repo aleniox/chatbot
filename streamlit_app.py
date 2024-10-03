@@ -70,15 +70,6 @@ formatted = dt.strftime("%B %d, %Y %I:%M:%S %p")
 image_bot = Image.open("avata/avata_human.png")
 image_human = Image.open("avata/avata_shogun.png")
 
-# local_llm = 'aleni_ox'
-
-# llm = ChatOllama(model=local_llm,
-#                  keep_alive="3h", 
-#                  max_tokens=512,  
-#                  temperature=0,
-#                 # callbacks=[StreamingStdOutCallbackHandler()]
-#                 )
-
 llm = ChatGroq(temperature=0, model_name="llama-3.1-70b-versatile", api_key=os.getenv("GROQ_API_KEY"))
 # embedding_model = GPT4AllEmbeddings(model_name="all-MiniLM-L6-v2.gguf2.f16.gguf", gpt4all_kwargs={'allow_download': 'True'})
 embedding_model = FastEmbedEmbeddings()
